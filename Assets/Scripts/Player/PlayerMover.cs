@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerAnimation))]
 public class PlayerMover : MonoBehaviour
 {
     private const string Horizontal = nameof(Horizontal);

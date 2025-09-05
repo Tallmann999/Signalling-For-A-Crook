@@ -1,46 +1,51 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class Alarm : MonoBehaviour
 {
     [SerializeField] private AudioSource _audioSource;
-    [SerializeField] private float _minVolum = 0f;
-    [SerializeField] private float _maxVolum = 0.5f;
-    [SerializeField] private float _fadedSpeed = 1f;
+    [SerializeField] private float _fadeSpeed = 1f;
 
-    private float _targetVolume;
-    private Coroutine _activeCoroutine = null;
+    private Coroutine _activeFadeCoroutine;
 
-    public void IncreasesSound()
+    private void Awake()
     {
-        _targetVolume = _maxVolum;
-
-        if (_activeCoroutine != null)
-        {
-            StopCoroutine(ChangeVolum());
-        }
-
-        _activeCoroutine = StartCoroutine(ChangeVolum());
+        _audioSource = GetComponent<AudioSource>();
+        _audioSource.volume = 0f;
+        _audioSource.Stop();
     }
 
-    public void ReducesSound()
+    public void SetTargetVolume(float targetVolume)
     {
-        _targetVolume = _minVolum;
-
-        if (_activeCoroutine != null)
+        if (_activeFadeCoroutine != null)
         {
-            StopCoroutine(ChangeVolum());
+            StopCoroutine(_activeFadeCoroutine);
         }
 
-        _activeCoroutine = StartCoroutine(ChangeVolum());
+        _activeFadeCoroutine = StartCoroutine(FadeVolumeCoroutine(targetVolume));
     }
 
-    private IEnumerator ChangeVolum()
+    private IEnumerator FadeVolumeCoroutine(float targetVolume)
     {
-        while (_audioSource.volume != _targetVolume)
+        if (targetVolume > 0 && !_audioSource.isPlaying)
         {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _targetVolume, _fadedSpeed * Time.deltaTime);
+            _audioSource.Play();
+        }
+
+        while (!Mathf.Approximately(_audioSource.volume, targetVolume))
+        {
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume,
+                targetVolume, _fadeSpeed * Time.deltaTime);
+
             yield return null;
         }
+
+        if (Mathf.Approximately(_audioSource.volume, 0f))
+        {
+            _audioSource.Stop();
+        }
+
+        _activeFadeCoroutine = null;
     }
 }

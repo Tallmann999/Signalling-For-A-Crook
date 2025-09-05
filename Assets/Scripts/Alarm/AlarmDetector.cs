@@ -1,27 +1,24 @@
+using System;
 using UnityEngine;
 
 public class AlarmDetector : MonoBehaviour
 {
-    private Alarm _alarm;
-
-    private void Awake()
-    {
-        _alarm = GetComponent<Alarm>();
-    }
+    public event Action<bool> AlarmStateChanged;
 
     private void OnTriggerEnter(Collider collider)
     {
-        if (collider.TryGetComponent(out PlayerMover playerMover) == true)
+        if (collider.TryGetComponent(out PlayerMover playerMover))
         {
-            _alarm.IncreasesSound();
+            AlarmStateChanged?.Invoke(true);
         }
     }
 
     private void OnTriggerExit(Collider collider)
     {
-        if (collider.TryGetComponent(out PlayerMover playerMover) == true)
+        if (collider.TryGetComponent(out PlayerMover playerMover))
         {
-            _alarm.ReducesSound();
+            AlarmStateChanged?.Invoke(false);
+
         }
     }
 }

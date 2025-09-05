@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class DoorToggle : MonoBehaviour
 {
     private const string OpeninDoor = "Open";
