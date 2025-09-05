@@ -1,9 +1,11 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerMover))]
 public class PlayerInput : MonoBehaviour
 {
+    private const string Horizontal = nameof(Horizontal);
+    private const string Vertical = nameof(Vertical);
+
     private PlayerMover _playerMover;
 
     private void Awake()
@@ -18,9 +20,6 @@ public class PlayerInput : MonoBehaviour
 
     private void MoveControl()
     {
-        const string Horizontal = "Horizontal";
-        const string Vertical = "Vertical";
-
         float horizontalInput = Input.GetAxis(Horizontal);
         float verticalInput = Input.GetAxis(Vertical);
 
